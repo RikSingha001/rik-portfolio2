@@ -1,0 +1,125 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  background-color: #f4f4f4;
+  color: #333;
+  line-height: 1.6;
+  padding: 20px;
+}
+
+.hero {
+  background-color: #0d47a1;
+  color: white;
+  text-align: center;
+  padding: 60px 20px;
+  border-radius: 10px;
+  margin-bottom: 30px;
+}
+
+.hero h1 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.tagline {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+}
+
+.cta-button {
+  display: inline-block;
+  background-color: #ffca28;
+  color: #000;
+  padding: 12px 25px;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  text-decoration: none;
+  transition: background 0.3s;
+}
+
+.cta-button:hover {
+  background-color: #ffc107;
+}
+
+/* Product Description */
+.product-description {
+  background: #fff;
+  padding: 30px;
+  border: 1px solid #ddd;
+  margin-bottom: 30px;
+  border-radius: 5px;
+}
+
+.signup-section {
+  background-color: #ffffff;
+  padding: 30px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+form .form-group {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+input[type="text"],
+input[type="email"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+}
+
+.checkbox input[type="checkbox"] {
+  margin-right: 10px;
+  width: auto;
+}
+
+button {
+  background-color: #0d47a1;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #08306b;
+}
+
+footer {
+  text-align: center;
+  margin-top: 40px;
+  color: #666;
+}
+
+@media (max-width: 600px) {
+  .hero h1 {
+    font-size: 1.8rem;
+  }
+
+  .cta-button {
+    padding: 10px 20px;
+  }
+
+  .form-group {
+    flex-direction: column;
+  }
+}
