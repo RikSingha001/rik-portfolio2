@@ -1,0 +1,60 @@
+main {
+  background: linear-gradient(to right, #6a11cb, #2575fc);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Segoe UI', sans-serif;
+  padding: 40px 20px;
+}
+
+main > div {
+  background-color: #ffffffee;
+  padding: 30px 40px;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  width: 100%;
+  max-width: 500px;
+}
+
+form label {
+  display: block;
+  font-weight: 600;
+  margin-top: 15px;
+  margin-bottom: 6px;
+  color: #333;
+}
+
+form input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.3s;
+}
+
+form input:focus {
+  border-color: #6a11cb;
+  outline: none;
+  background-color: #f8f8f8;
+}
+
+form button[type="submit"] {
+  display: block;
+  margin: 30px auto 0;
+  background-color: #6a11cb;
+  color: white;
+  padding: 12px 30px;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+form button[type="submit"]:hover {
+  background-color: #4e0fc4;
+  transform: scale(1.03);
+}
