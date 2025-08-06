@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Watch Movie</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        iframe {
+            width: 90%;
+            height: 500px;
+            border-radius: 10px;
+            border: 5px solid white;
+            margin-top: 20px;
+        }
+        
+        .video-controls {
+            margin: 20px;
+            text-align: center;
+        }
+        
+        .status-button {
+            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            margin: 10px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .status-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        
+        .status-button.watched {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+        }
+        
+        .status-button.resume {
+            background: linear-gradient(45deg, #ff9800, #f57c00);
+        }
+        
+        .video-info {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            margin: 20px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .video-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: white;
+            text-align: center;
+        }
+        
+        .video-status {
+            text-align: center;
+            color: white;
+            font-size: 1.1rem;
+            margin: 10px 0;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #45a049);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .time-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .navigation-buttons {
+            text-align: center;
+            margin: 20px;
+        }
+        
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 20px;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <h1>🎥 now streaming</h1>
+    
+    <div class="video-info">
+        <div class="video-title" id="videoTitle">Loading...</div>
+        <div class="video-status" id="videoStatus">Status loading...</div>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        
+        <div class="time-info">
+            <span id="watchedTime">00:00</span>
+            <span id="totalTime">--:--</span>
+        </div>
+    </div>
+    
+    <div id="video-container"></div>
+    
+    <div class="video-controls">
+        <button class="status-button" id="markCompleteBtn" onclick="markAsComplete()">
+            ✅ Completed
+        </button>
+        <button class="status-button resume" id="markResumeBtn" onclick="markAsResume()">
+            ⏸️ Resume - continue later
+        </button>
+        <button class="status-button" id="resetBtn" onclick="resetStatus()">
+            🔄 Reset
+        </button>
+    </div>
+    
+    <div class="navigation-buttons">
+        <a href="index.html" class="nav-btn">🏠 Home</a>
+        <a href="status.html" class="nav-btn">📊 Status</a>
+        <a href="crime.html" class="nav-btn">🎬 All Movies</a>
+    </div>
+
+    <script>
+        let currentVideoId = '';
+        let videoTitle = '';
+        let startTime = Date.now();
+        let totalWatchTime = 0;
+        
+        // Predefined movie titles (you can expand this)
+        const movieTitles = {
+            'C8_VfjZI-OY': 'Crime Movie 1',
+            'D_ym_Hlf-Eo': 'Crime Movie 2',
+            'dQw4w9WgXcQ': 'Never Gonna Give You Up',
+            '9bZkp7q19f0': 'Gangnam Style',
+            'kJQP7kiw5Fk': 'Despacito',
+            'JGwWNGJdvx8': 'Shape of You',
+            'YQHsXMglC9A': 'Hello - Adele',
+            'OPf0YbXqDm0': 'Uptown Funk',
+            'RgKAFK5djSk': 'Wiz Khalifa - See You Again',
+            'CevxZvSJLk8': 'Katy Perry - Roar'
+        };
+
+        // Get video status from localStorage
+        function getVideoStatus(videoId) {
+            const statuses = JSON.parse(localStorage.getItem('videoStatuses') || '{}');
+            return statuses[videoId] || { status: 'unwatched', watchTime: 0, totalTime: 0 };
+        }
+
+        // Save video status to localStorage
+        function saveVideoStatus(videoId, status, watchTime = 0, totalTime = 0) {
+            const statuses = JSON.parse(localStorage.getItem('videoStatuses') || '{}');
+            statuses[videoId] = {
+                status: status,
+                watchTime: watchTime,
+                totalTime: totalTime,
+                lastUpdated: Date.now(),
+                title: movieTitles[videoId] || 'Unknown Video'
+            };
+            localStorage.setItem('videoStatuses', JSON.stringify(statuses));
+            updateDisplay();
+        }
+
+        // Update the display based on current status
+        function updateDisplay() {
+            const status = getVideoStatus(currentVideoId);
+            const statusElement = document.getElementById('videoStatus');
+            const progressFill = document.getElementById('progressFill');
+            const watchedTimeElement = document.getElementById('watchedTime');
+            
+            let statusText = '';
+            let progressPercent = 0;
+            
+            switch(status.status) {
+                case 'completed':
+                    statusText = '✅ Completed - watch later';
+                    progressPercent = 100;
+                    break;
+                case 'resume':
+                    statusText = '⏸️ Resume - continue later';
+                    progressPercent = status.totalTime > 0 ? (status.watchTime / status.totalTime) * 100 : 50;
+                    break;
+                default:
+                    statusText = '🆕 New video - not watched yet';
+                    progressPercent = 0;
+            }
+            
+            statusElement.textContent = statusText;
+            progressFill.style.width = progressPercent + '%';
+            
+            // Update watched time display
+            const minutes = Math.floor(status.watchTime / 60);
+            const seconds = status.watchTime % 60;
+            watchedTimeElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Mark video as complete
+        function markAsComplete() {
+            const watchTime = Math.floor((Date.now() - startTime) / 1000) + totalWatchTime;
+            saveVideoStatus(currentVideoId, 'completed', watchTime, watchTime);
+            
+            // Also add to the old system for backward compatibility
+            const watchedMovies = JSON.parse(localStorage.getItem('watchedMovies') || '[]');
+            if (!watchedMovies.includes(currentVideoId)) {
+                watchedMovies.push(currentVideoId);
+                localStorage.setItem('watchedMovies', JSON.stringify(watchedMovies));
+            }
+            
+            alert('✅ Video marked as completed!');
+        }
+
+        // Mark video for resume
+        function markAsResume() {
+            const watchTime = Math.floor((Date.now() - startTime) / 1000) + totalWatchTime;
+            saveVideoStatus(currentVideoId, 'resume', watchTime, 0);
+            alert('⏸️ Video saved for later.!');
+        }
+
+        // Reset video status
+        function resetStatus() {
+            if (confirm('are you sure you want to reset the video status?')) {
+                saveVideoStatus(currentVideoId, 'unwatched', 0, 0);
+                
+                // Remove from old system too
+                const watchedMovies = JSON.parse(localStorage.getItem('watchedMovies') || '[]');
+                const index = watchedMovies.indexOf(currentVideoId);
+                if (index > -1) {
+                    watchedMovies.splice(index, 1);
+                    localStorage.setItem('watchedMovies', JSON.stringify(watchedMovies));
+                }
+                
+                startTime = Date.now();
+                totalWatchTime = 0;
+                alert('🔄 wait restore the video');
+            }
+        }
+
+        // Initialize the page
+        const params = new URLSearchParams(window.location.search);
+        const videoId = params.get("video");
+
+        if (videoId) {
+            currentVideoId = videoId;
+            videoTitle = movieTitles[videoId] || 'Unknown Video';
+            
+            // Set video title
+            document.getElementById('videoTitle').textContent = videoTitle;
+            
+            // Load existing watch time
+            const status = getVideoStatus(videoId);
+            totalWatchTime = status.watchTime || 0;
+            
+            // Create the video iframe
+            const container = document.getElementById("video-container");
+            container.innerHTML = `
+                <iframe 
+                    src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0" 
+                    frameborder="0" 
+                    allow="autoplay; encrypted-media" 
+                    allowfullscreen>
+                </iframe>`;
+            
+            // Update display
+            updateDisplay();
+            
+            // Track watch time every 10 seconds
+            setInterval(() => {
+                const currentWatchTime = Math.floor((Date.now() - startTime) / 1000) + totalWatchTime;
+                const currentStatus = getVideoStatus(currentVideoId);
+                if (currentStatus.status !== 'completed') {
+                    saveVideoStatus(currentVideoId, currentStatus.status || 'resume', currentWatchTime, 0);
+                }
+            }, 10000);
+            
+        } else {
+            document.getElementById("video-container").innerHTML = "<p>❌ cant find the video!</p>";
+            document.getElementById('videoTitle').textContent = 'cant find the video';
+            document.getElementById('videoStatus').textContent = '❌ cant find the video';
+        }
+
+        // Update display every 5 seconds
+        setInterval(updateDisplay, 5000);
+
+        // Save watch time when page is about to unload
+        window.addEventListener('beforeunload', () => {
+            if (currentVideoId) {
+                const watchTime = Math.floor((Date.now() - startTime) / 1000) + totalWatchTime;
+                const status = getVideoStatus(currentVideoId);
+                if (status.status !== 'completed') {
+                    saveVideoStatus(currentVideoId, 'resume', watchTime, 0);
+                }
+            }
+        });
+    </script>
+
+    <script>
+        // Optional: Add a click event to the iframe to pause the video
+        setTimeout(() => {
+            const iframe = document.querySelector('iframe');
+            if (iframe) {
+                iframe.addEventListener('click', function() {
+                    this.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+                });
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

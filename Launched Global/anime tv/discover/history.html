@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Watch History - CinemaApp</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #1a1a1a;
+      color: white;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #333;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      color: #ff6b6b;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .btn {
+      background: linear-gradient(45deg, #4a90e2, #357abd);
+      color: white;
+      padding: 0.8rem 1.5rem;
+      text-decoration: none;
+      border-radius: 25px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(74, 144, 226, 0.4);
+    }
+
+    .btn.clear-btn {
+      background: linear-gradient(45deg, #ff6b6b, #ff5252);
+    }
+
+    .btn.clear-btn:hover {
+      box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: #2a2a2a;
+      padding: 1.5rem;
+      border-radius: 15px;
+      text-align: center;
+      border: 1px solid #333;
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #4a90e2;
+    }
+
+    .stat-label {
+      color: #ccc;
+      margin-top: 0.5rem;
+    }
+
+    .history-container {
+      background: #2a2a2a;
+      border-radius: 15px;
+      padding: 2rem;
+      border: 1px solid #333;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      color: #ff6b6b;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .history-list {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .history-item {
+      display: flex;
+      align-items: center;
+      background: #333;
+      border-radius: 10px;
+      padding: 1rem;
+      transition: all 0.3s ease;
+      border: 1px solid #404040;
+    }
+
+    .history-item:hover {
+      background: #3a3a3a;
+      border-color: #4a90e2;
+      transform: translateY(-2px);
+    }
+
+    .movie-image {
+      width: 80px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-right: 1rem;
+    }
+
+    .movie-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .movie-name {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #ffd93d;
+    }
+
+    .movie-genre {
+      color: #4a90e2;
+      font-size: 0.9rem;
+    }
+
+    .watch-time {
+      color: #888;
+      font-size: 0.8rem;
+    }
+
+    .watch-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .watch-again-btn {
+      background: linear-gradient(45deg, #50c878, #45b06a);
+      color: white;
+      padding: 0.5rem 1rem;
+      text-decoration: none;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .watch-again-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 15px rgba(80, 200, 120, 0.3);
+    }
+
+    .remove-btn {
+      background: #ff6b6b;
+      color: white;
+      border: none;
+      padding: 0.5rem;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: all 0.3s ease;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .remove-btn:hover {
+      background: #ff5252;
+      transform: scale(1.1);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: #888;
+    }
+
+    .empty-state h3 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: #666;
+    }
+
+    .empty-state p {
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+
+    .empty-state a {
+      display: inline-block;
+      background: linear-gradient(45deg, #4a90e2, #357abd);
+      color: white;
+      padding: 1rem 2rem;
+      text-decoration: none;
+      border-radius: 25px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .empty-state a:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(74, 144, 226, 0.4);
+    }
+
+    .search-box {
+      width: 100%;
+      padding: 1rem;
+      background: #333;
+      border: 1px solid #404040;
+      border-radius: 25px;
+      color: white;
+      font-size: 1rem;
+      margin-bottom: 2rem;
+      transition: border-color 0.3s ease;
+    }
+
+    .search-box:focus {
+      outline: none;
+      border-color: #4a90e2;
+    }
+
+    .search-box::placeholder {
+      color: #888;
+    }
+
+    .filter-buttons {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      background: #333;
+      color: #ccc;
+      padding: 0.5rem 1rem;
+      border: 1px solid #404040;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+    }
+
+    .filter-btn.active {
+      background: #4a90e2;
+      color: white;
+      border-color: #4a90e2;
+    }
+
+    .filter-btn:hover {
+      border-color: #4a90e2;
+      color: white;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 1rem;
+      }
+      
+      h1 {
+        font-size: 2rem;
+      }
+      
+      .header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+      
+      .header-actions {
+        flex-direction: column;
+        width: 100%;
+      }
+      
+      .stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .history-item {
+        flex-direction: column;
+        text-align: center;
+      }
+      
+      .movie-image {
+        margin-right: 0;
+        margin-bottom: 1rem;
+      }
+      
+      .filter-buttons {
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🕒 Watch History</h1>
+    <div class="header-actions">
+      <a href="javascript:history.back()" class="btn">← Go Back</a>
+      <button onclick="clearHistory()" class="btn clear-btn">Clear History</button>
+    </div>
+  </div>
+
+  <!-- Statistics -->
+  <div class="stats">
+    <div class="stat-card">
+      <div class="stat-number" id="totalMovies">0</div>
+      <div class="stat-label">Movies Watched</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number" id="totalGenres">0</div>
+      <div class="stat-label">Genres Explored</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number" id="thisWeek">0</div>
+      <div class="stat-label">This Week</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number" id="favoriteGenre">-</div>
+      <div class="stat-label">Top Genre</div>
+    </div>
+  </div>
+
+  <div class="history-container">
+    <div class="section-title">📺 Your Watch History</div>
+    
+    <!-- Search and Filters -->
+    <input type="text" id="searchBox" class="search-box" placeholder="Search your watch history...">
+    
+    <div class="filter-buttons">
+      <button class="filter-btn active" onclick="filterHistory('all')">All</button>
+      <button class="filter-btn" onclick="filterHistory('Drama')">Drama</button>
+      <button class="filter-btn" onclick="filterHistory('Action')">Action</button>
+      <button class="filter-btn" onclick="filterHistory('Comedy')">Comedy</button>
+      <button class="filter-btn" onclick="filterHistory('thisWeek')">This Week</button>
+    </div>
+    
+    <div class="history-list" id="historyList">
+      <!-- Will be populated by JavaScript -->
+    </div>
+  </div>
+
+  <script>
+    let allHistory = [];
+    let filteredHistory = [];
+
+    // Load and display history
+    function loadHistory() {
+      allHistory = JSON.parse(localStorage.getItem('movieHistory') || '[]');
+      filteredHistory = [...allHistory];
+      displayHistory();
+      updateStats();
+    }
+
+    // Display history items
+    function displayHistory() {
+      const historyList = document.getElementById('historyList');
+      
+      if (filteredHistory.length === 0) {
+        historyList.innerHTML = `
+          <div class="empty-state">
+            <h3>No movies in your history</h3>
+            <p>Start watching movies to build your personal watch history. We'll keep track of everything you watch!</p>
+            <a href="javascript:history.back()">Start Watching</a>
+          </div>
+        `;
+        return;
+      }
+
+      historyList.innerHTML = filteredHistory.map((item, index) => `
+        <div class="history-item" data-id="${item.id}">
+          <img src="${item.image}" alt="${item.name}" class="movie-image" onerror="this.src='https://via.placeholder.com/80x60/333/fff?text=Movie'">
+          <div class="movie-info">
+            <div class="movie-name">${item.name}</div>
+            <div class="movie-genre">${item.genre}</div>
+            <div class="watch-time">Watched ${formatTimeAgo(item.watchedAt)}</div>
+          </div>
+          <div class="watch-actions">
+            <a href="watch.html?video=${item.id}" class="watch-again-btn">Watch Again</a>
+            <button class="remove-btn" onclick="removeFromHistory('${item.id}')" title="Remove from history">×</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Format time ago
+    function formatTimeAgo(timestamp) {
+      const now = new Date();
+      const past = new Date(timestamp);
+      const diff = now - past;
+      
+      const minutes = Math.floor(diff / 60000);
+      const hours = Math.floor(diff / 3600000);
+      const days = Math.floor(diff / 86400000);
+      
+      if (minutes < 1) return 'just now';
+      if (minutes < 60) return `${minutes} minute${minutes === 1 ? '' : 's'} ago`;
+      if (hours < 24) return `${hours} hour${hours === 1 ? '' : 's'} ago`;
+      if (days < 7) return `${days} day${days === 1 ? '' : 's'} ago`;
+      if (days < 30) return `${Math.floor(days / 7)} week${Math.floor(days / 7) === 1 ? '' : 's'} ago`;
+      return `${Math.floor(days / 30)} month${Math.floor(days / 30) === 1 ? '' : 's'} ago`;
+    }
+
+    // Update statistics
+    function updateStats() {
+      document.getElementById('totalMovies').textContent = allHistory.length;
+      
+      // Count unique genres
+      const genres = [...new Set(allHistory.map(item => item.genre))];
+      document.getElementById('totalGenres').textContent = genres.length;
+      
+      // Count movies watched this week
+      const oneWeekAgo = new Date();
+      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+      const thisWeekCount = allHistory.filter(item => new Date(item.watchedAt) > oneWeekAgo).length;
+      document.getElementById('thisWeek').textContent = thisWeekCount;
+      
+      // Find favorite genre
+      if (allHistory.length > 0) {
+        const genreCounts = {};
+        allHistory.forEach(item => {
+          genreCounts[item.genre] = (genreCounts[item.genre] || 0) + 1;
+        });
+        const favoriteGenre = Object.keys(genreCounts).reduce((a, b) => 
+          genreCounts[a] > genreCounts[b] ? a : b
+        );
+        document.getElementById('favoriteGenre').textContent = favoriteGenre;
+      }
+    }
+
+    // Filter history
+    function filterHistory(type) {
+      // Update active button
+      document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      
+      if (type === 'all') {
+        filteredHistory = [...allHistory];
+      } else if (type === 'thisWeek') {
+        const oneWeekAgo = new Date();
+        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+        filteredHistory = allHistory.filter(item => new Date(item.watchedAt) > oneWeekAgo);
+      } else {
+        filteredHistory = allHistory.filter(item => item.genre === type);
+      }
+      
+      displayHistory();
+    }
+
+    // Search functionality
+    function searchHistory(query) {
+      if (!query.trim()) {
+        // If search is empty, apply current filter
+        const activeFilter = document.querySelector('.filter-btn.active').textContent;
+        if (activeFilter === 'All') {
+          filteredHistory = [...allHistory];
+        } else if (activeFilter === 'This Week') {
+          const oneWeekAgo = new Date();
+          oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+          filteredHistory = allHistory.filter(item => new Date(item.watchedAt) > oneWeekAgo);
+        } else {
+          filteredHistory = allHistory.filter(item => item.genre === activeFilter);
+        }
+      } else {
+        filteredHistory = allHistory.filter(item => 
+          item.name.toLowerCase().includes(query.toLowerCase()) ||
+          item.genre.toLowerCase().includes(query.toLowerCase())
+        );
+      }
+      displayHistory();
+    }
+
+    // Remove item from history
+    function removeFromHistory(movieId) {
+      if (confirm('Remove this movie from your history?')) {
+        allHistory = allHistory.filter(item => item.id !== movieId);
+        localStorage.setItem('movieHistory', JSON.stringify(allHistory));
+        
+        // Update filtered history
+        filteredHistory = filteredHistory.filter(item => item.id !== movieId);
+        
+        displayHistory();
+        updateStats();
+        showNotification('Movie removed from history');
+      }
+    }
+
+    // Clear all history
+    function clearHistory() {
+      if (confirm('Are you sure you want to clear your entire watch history? This cannot be undone.')) {
+        localStorage.removeItem('movieHistory');
+        allHistory = [];
+        filteredHistory = [];
+        displayHistory();
+        updateStats();
+        showNotification('History cleared successfully');
+      }
+    }
+
+    // Show notification
+    function showNotification(message) {
+      const notification = document.createElement('div'); 
+      notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(45deg, #4a90e2, #357abd);
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        z-index: 10000;
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+      `;
+      notification.textContent = message;
+      
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.style.transform = 'translateX(0)';
+      }, 100);
+      
+      setTimeout(() => {
+        notification.style.transform = 'translateX(100%)';
+        setTimeout(() => notification.remove(), 300);
+      }, 3000);
+    }
+
+    // Event listeners
+    document.getElementById('searchBox').addEventListener('input', (e) => {
+      searchHistory(e.target.value);
+    });
+
+    // Load history on page load
+    document.addEventListener('DOMContentLoaded', loadHistory);
+  </script>
+</body>
+</html>

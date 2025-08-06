@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Crime Movies</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #1a1a1a;
+      color: white;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #333;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      color: #ff6b6b;
+    }
+
+    .history-btn {
+      background: linear-gradient(45deg, #4a90e2, #357abd);
+      color: white;
+      padding: 0.8rem 1.5rem;
+      text-decoration: none;
+      border-radius: 25px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .history-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(74, 144, 226, 0.4);
+    }
+
+    .thumbnail-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    .card {
+      background: #2a2a2a;
+      border-radius: 15px;
+      padding: 1.5rem;
+      text-decoration: none;
+      color: white;
+      transition: all 0.3s ease;
+      border: 1px solid #333;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(255, 107, 107, 0.3);
+      border-color: #ff6b6b;
+    }
+
+    .card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+    }
+
+    .card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: #ffd93d;
+    }
+
+    .card-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: #ccc;
+    }
+
+    .rating {
+      color: #ffd93d;
+    }
+
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: linear-gradient(45deg, #4a90e2, #357abd);
+      color: white;
+      padding: 1rem 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      z-index: 10000;
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+    }
+
+    .notification.show {
+      transform: translateX(0);
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 1rem;
+      }
+      
+      h1 {
+        font-size: 2rem;
+      }
+      
+      .thumbnail-container {
+        grid-template-columns: 1fr;
+      }
+      
+      .header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🔥 Crime Movies</h1>
+    <a href="history.html" class="history-btn">View History</a>
+  </div>
+
+  <div class="thumbnail-container">
+    <a href="watch.html?video=uaUVQyhGGVQ" class="card" onclick="saveToHistory('The Pursuit of Happyness', 'https://img.youtube.com/vi/uaUVQyhGGVQ/0.jpg', 'crime1')">
+      <img src="https://img.youtube.com/vi/uaUVQyhGGVQ/0.jpg" alt="The Pursuit of Happyness" />
+      <h3>The Pursuit of Happyness</h3>
+      <div class="card-info">
+        <span class="rating">⭐ 8.0/10</span>
+        <span>2006 • Crime</span>
+      </div>
+    </a>
+    
+    <a href="watch.html?video=CVRUPTwBGIw" class="card" onclick="saveToHistory('The Shawshank Redemption', 'https://img.youtube.com/vi/CVRUPTwBGIw/0.jpg', 'crime2')">
+      <img src="https://img.youtube.com/vi/CVRUPTwBGIw/0.jpg" alt="The Shawshank Redemption" />
+      <h3>The Shawshank Redemption</h3>
+      <div class="card-info">
+        <span class="rating">⭐ 9.3/10</span>
+        <span>1994 • Crime</span> 
+      </div>
+    </a>
+    
+    <a href="watch.html?video=sQ7Tjglg508" class="card" onclick="saveToHistory('Forrest Gump', 'https://img.youtube.com/vi/sQ7Tjglg508/0.jpg', 'crime3')">
+      <img src="https://img.youtube.com/vi/sQ7Tjglg508/0.jpg" alt="Forrest Gump" />
+      <h3>Forrest Gump</h3>
+      <div class="card-info">
+        <span class="rating">⭐ 8.8/10</span>
+        <span>1994 • Crime</span>
+      </div>
+    </a>
+    
+    <a href="watch.html?video=zgA1KKABghQ" class="card" onclick="saveToHistory('Good Will Hunting', 'https://img.youtube.com/vi/zgA1KKABghQ/0.jpg', 'crime4')">
+      <img src="https://img.youtube.com/vi/zgA1KKABghQ/0.jpg" alt="Good Will Hunting" />
+      <h3>Good Will Hunting</h3>
+      <div class="card-info">
+        <span class="rating">⭐ 8.3/10</span>
+        <span>1997 • Crime</span>
+      </div>
+    </a>
+    
+    <a href="watch.html?video=cZGVC_CL1VM" class="card" onclick="saveToHistory('Dead Poets Society', 'https://img.youtube.com/vi/cZGVC_CL1VM/0.jpg', 'crime5')">
+      <img src="https://img.youtube.com/vi/cZGVC_CL1VM/0.jpg" alt="Dead Poets Society" />
+      <h3>Dead Poets Society</h3>
+      <div class="card-info">
+        <span class="rating">⭐ 8.1/10</span>
+        <span>1989 • Crime</span>
+      </div>
+    </a>
+    
+    <a href="watch.html?video=GU7PyzO_Gak" class="card" onclick="saveToHistory('A Beautiful Mind', 'https://img.youtube.com/vi/GU7PyzO_Gak/0.jpg', 'crime6')">
+      <img src="https://img.youtube.com/vi/GU7PyzO_Gak/0.jpg" alt="A Beautiful Mind" />
+      <h3>A Beautiful Mind</h3>
+      <div class="card-info">
+        <span class="rating">⭐ 8.2/10</span>
+        <span>2001 • Crime</span>
+      </div>
+    </a>
+  </div>
+
+  <script>
+    function saveToHistory(movieName, imageUrl, movieId) {
+      // Get existing history or create empty array
+      let history = JSON.parse(localStorage.getItem('movieHistory') || '[]');
+       
+      // Create new entry
+      const newEntry = {
+        id: movieId,
+        name: movieName,
+        image: imageUrl,
+        genre: 'Crime',
+        watchedAt: new Date().toISOString(),
+        timestamp: Date.now()
+      };
+      
+      // Remove duplicate if exists (to move to top)
+      history = history.filter(item => item.id !== movieId);
+      
+      // Add to beginning of array
+      history.unshift(newEntry);
+      
+      // Keep only last 50 entries
+      history = history.slice(0, 50);
+      
+      // Save to localStorage
+      localStorage.setItem('movieHistory', JSON.stringify(history));
+      
+      // Show notification
+      showNotification(`Added "${movieName}" to your history!`);
+    }
+
+    function showNotification(message) {
+      // Remove existing notification if any
+      const existing = document.querySelector('.notification');
+      if (existing) {
+        existing.remove();
+      }
+      
+      // Create new notification
+      const notification = document.createElement('div');
+      notification.className = 'notification';
+      notification.textContent = message;
+      
+      document.body.appendChild(notification);
+      
+      // Show notification
+      setTimeout(() => {
+        notification.classList.add('show');
+      }, 100);
+      
+      // Hide and remove notification after 3 seconds
+      setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+          notification.remove();
+        }, 300);
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
